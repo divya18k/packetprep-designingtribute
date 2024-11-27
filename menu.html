@@ -20,14 +20,41 @@
             text-align: center;
         }
         .menu {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        .menu > div {
+            background-color: #fff;
+            margin: 0 10px;
             padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            text-align: center;
+            width: 150px;
         }
         .menu h2 {
-            font-size: 2rem;
+            font-size: 1.5rem;
             margin-bottom: 20px;
         }
+        .menu div:hover {
+            background-color: #f0f0f0;
+        }
 
-        /* Menu Item Styles */
+        /* Collapsible Sections for Menu Items */
+        .menu-items {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            display: none; /* Hide sections by default */
+        }
+        .menu-items.show {
+            display: block; /* Show the menu section when active */
+        }
+
         .item {
             background-color: #fff;
             margin: 10px 0;
@@ -108,72 +135,116 @@
 </head>
 <body>
     <header>
-        <h1>Restaurant Menu</h1>
+        <h1>The Cup of Life</h1>
     </header>
 
     <div class="menu">
-        <h2>Our Specials</h2>
-        <!-- Dynamic menu items will be inserted here -->
-        <div id="menu-items"></div>
+        <!-- Sections for Tea, Coffee, and Accompaniments -->
+        <div onclick="toggleMenu('tea-menu')">
+            <h2>Tea</h2>
+        </div>
+        <div onclick="toggleMenu('coffee-menu')">
+            <h2>Coffee</h2>
+        </div>
+        <div onclick="toggleMenu('accompaniments-menu')">
+            <h2>Accompaniments</h2>
+        </div>
+    </div>
+
+    <!-- Menu items for each category -->
+    <div id="tea-menu" class="menu-items show"> <!-- Show by default -->
+        <h3>Our Tea Selection</h3>
+        <div id="tea-items"></div>
+    </div>
+
+    <div id="coffee-menu" class="menu-items">
+        <h3>Our Coffee Selection</h3>
+        <div id="coffee-items"></div>
+    </div>
+
+    <div id="accompaniments-menu" class="menu-items">
+        <h3>Our Accompaniments</h3>
+        <div id="accomp-items"></div>
     </div>
 
     <div class="order-summary" id="order-summary">
         <h2>Order Summary</h2>
         <div id="order-items"></div>
-        <div><strong>Total:</strong> $<span id="total-amount">0.00</span></div>
+        <div><strong>Total:</strong>₹<span id="total-amount">0.00</span></div>
         <a class="place-order" href="payment.html">Place Order</a>
     </div>
 
     <script>
-        // Menu data - just add more items here as needed
-        const menuItems = [
-            { id: 'item1', name: 'Hot Normal Tea', price: 15.00 },
-            { id: 'item2', name: 'Ginger Tea', price: 20.00 },
-            { id: 'item3', name: 'Lemon Tea', price: 20.00 },
-            { id: 'item4', name: 'Masala Tea', price: 20.00 },
-            { id: 'item5', name: 'Ellachi Tea', price: 20.00 },
-            { id: 'item6', name: 'Jagerry Tea', price: 20.00 },
-            { id: 'item7', name: 'Green Tea', price: 20.00 }
-        ];
+        // Menu data
+        const menuItems = {
+            tea: [
+                { name: 'Hot Normal Tea', price: 15.00 },
+                { name: 'Ginger Tea', price: 20.00 },
+                { name: 'Lemon Tea', price: 20.00 },
+                { name: 'Masala Tea', price: 20.00 },
+                { name: 'Ellachi Tea', price: 20.00 },
+                { name: 'Green Tea', price: 20.00 },
+                { name: 'Lemon Tea', price: 20.00 },
+            ],
+            coffee: [
+                { name: 'Espresso', price: 25.00 },
+                { name: 'Vanilla Cofee', price: 60.00 },
+            ],
+            accompaniments: [
+                { name: 'Biscuits', price: 10.00 },
+                { name: 'Toast', price: 15.00 },
+            ]
+        };
 
         // Initialize quantities
         const quantities = {};
 
-        // Dynamically create the menu items
-        const menuContainer = document.getElementById('menu-items');
-        menuItems.forEach(item => {
-            // Initialize the quantity for each item
-            quantities[item.id] = 0;
+        // Function to render items dynamically based on menu category
+        function renderMenuItems(category, containerId) {
+            const container = document.getElementById(containerId);
+            menuItems[category].forEach((item, index) => {
+                const itemDiv = document.createElement('div');
+                itemDiv.classList.add('item');
+                itemDiv.innerHTML = `
+                    <div>
+                        <h3>${item.name}</h3>
+                        <p class="price">₹${item.price.toFixed(2)}</p>
+                    </div>
+                    <div class="quantity-controls">
+                        <button onclick="decrement('${category}-${index}')">-</button>
+                        <span id="quantity-${category}-${index}">0</span>
+                        <button onclick="increment('${category}-${index}')">+</button>
+                    </div>
+                `;
+                container.appendChild(itemDiv);
+            });
+        }
 
-            // Create the menu item element dynamically
-            const itemElement = document.createElement('div');
-            itemElement.classList.add('item');
-            itemElement.id = item.id;
+        // Call render function to generate menu items
+        renderMenuItems('tea', 'tea-items');
+        renderMenuItems('coffee', 'coffee-items');
+        renderMenuItems('accompaniments', 'accomp-items');
 
-            itemElement.innerHTML = `
-                <div>
-                    <h3>${item.name}</h3>
-                    <p class="price">$${item.price.toFixed(2)}</p>
-                </div>
-                <div class="quantity-controls">
-                    <button onclick="decrement('${item.id}')">-</button>
-                    <span id="quantity-${item.id}">0</span>
-                    <button onclick="increment('${item.id}')">+</button>
-                </div>
-            `;
+        // Toggle visibility of menu sections
+        function toggleMenu(menuId) {
+            // Hide all menu sections first
+            const allMenus = document.querySelectorAll('.menu-items');
+            allMenus.forEach(menu => {
+                menu.classList.remove('show');
+            });
 
-            // Append the item element to the menu container
-            menuContainer.appendChild(itemElement);
-        });
+            // Show the selected menu section
+            const selectedMenu = document.getElementById(menuId);
+            selectedMenu.classList.add('show');
+        }
 
-        // Increment item quantity
+        // Update quantity and order summary
         function increment(itemId) {
-            quantities[itemId]++;
+            quantities[itemId] = (quantities[itemId] || 0) + 1;
             updateQuantity(itemId);
             updateOrderSummary();
         }
 
-        // Decrement item quantity
         function decrement(itemId) {
             if (quantities[itemId] > 0) {
                 quantities[itemId]--;
@@ -182,29 +253,35 @@
             }
         }
 
-        // Update the displayed quantity
         function updateQuantity(itemId) {
             document.getElementById(`quantity-${itemId}`).textContent = quantities[itemId];
         }
 
-        // Update the order summary
+        // Update order summary
         function updateOrderSummary() {
             let orderItems = '';
             let totalAmount = 0;
-
-            // Loop through all menu items and calculate total for those selected
-            menuItems.forEach(item => {
-                if (quantities[item.id] > 0) {
-                    const itemTotal = item.price * quantities[item.id];
-                    orderItems += `<div class="order-item">${item.name} x ${quantities[item.id]} - $${itemTotal.toFixed(2)}</div>`;
-                    totalAmount += itemTotal;
+            Object.keys(quantities).forEach(itemId => {
+                const [category, index] = itemId.split('-');
+                const item = menuItems[category][parseInt(index)];
+                if (quantities[itemId] > 0) {
+                    orderItems += `
+                        <div class="order-item">
+                            <span>${item.name}</span>
+                            <span>₹${item.price.toFixed(2)} x ${quantities[itemId]}</span>
+                        </div>
+                    `;
+                    totalAmount += item.price * quantities[itemId];
                 }
             });
-
-            // Update the order summary with the items and total
             document.getElementById('order-items').innerHTML = orderItems;
             document.getElementById('total-amount').textContent = totalAmount.toFixed(2);
         }
     </script>
 </body>
 </html>
+
+       
+      
+         
+       
