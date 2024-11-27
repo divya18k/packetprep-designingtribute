@@ -23,6 +23,9 @@
         .payment-option {
             margin: 15px 0;
         }
+        .payment-option input[type="radio"] {
+            margin-right: 10px;
+        }
         .payment-option select,
         .payment-option input {
             margin-right: 10px;
@@ -52,7 +55,7 @@
             font-weight: bold;
         }
         .status {
-            font-size: 1.2rem;
+            font-size: 2rem;
             margin-top: 20px;
         }
         .accepted {
@@ -86,13 +89,12 @@
     <div class="payment-options">
         <h2>Choose Payment Method</h2>
 
-        <!-- Dropdown to select payment method -->
+        <!-- Radio buttons for selecting payment method -->
         <div class="payment-option">
-            <select id="payment-method" name="payment-method">
-                <option value="">Select Payment Method</option>
-                <option value="cash">Cash on Delivery</option>
-                <option value="pay-online">Pay Online</option>
-            </select>
+            <input type="radio" id="cash" name="payment-method" value="cash">
+            <label for="cash">Cash </label><br>
+            <input type="radio" id="online" name="payment-method" value="pay-online">
+            <label for="online">Pay Online</label>
         </div>
 
         <!-- Dropdown for online payment options (initially hidden) -->
@@ -144,37 +146,39 @@
         }
 
         // Handle payment method selection
-        const paymentMethodSelect = document.getElementById('payment-method');
+        const paymentMethodRadios = document.getElementsByName('payment-method');
         const onlineOptions = document.getElementById('online-options');
         const orderStatus = document.getElementById('order-status');
         const qrScanner = document.getElementById('qr-scanner');
         const paymentSummary = document.getElementById('payment-summary');
         const onlineMethodSelect = document.getElementById('online-method');
 
-        paymentMethodSelect.addEventListener('change', function() {
-            const selectedPaymentMethod = this.value;
+        paymentMethodRadios.forEach(radio => {
+            radio.addEventListener('change', function() {
+                const selectedPaymentMethod = this.value;
 
-            if (selectedPaymentMethod === 'cash') {
-                // Hide online payment options and show "Cash on Delivery" status
-                orderStatus.innerHTML = 'Order Accepted ✔️';
-                orderStatus.className = 'status accepted';
-                paymentSummary.style.display = 'none';
-                onlineOptions.style.display = 'none';
-                qrScanner.style.display = 'none';
-            } else if (selectedPaymentMethod === 'pay-online') {
-                // Show online payment options and update summary
-                orderStatus.innerHTML = 'Order Not Accepted';
-                orderStatus.className = 'status not-accepted';
-                onlineOptions.style.display = 'block';
-                updateOrderSummary();
-                paymentSummary.style.display = 'block';
-                qrScanner.style.display = 'block';
-            } else {
-                // Hide both options if nothing is selected
-                paymentSummary.style.display = 'none';
-                onlineOptions.style.display = 'none';
-                qrScanner.style.display = 'none';
-            }
+                if (selectedPaymentMethod === 'cash') {
+                    // Show "Order Accepted" when Cash is selected
+                    orderStatus.innerHTML = 'Order Accepted ✔️';
+                    orderStatus.className = 'status accepted';
+                    paymentSummary.style.display = 'none';
+                    onlineOptions.style.display = 'none';
+                    qrScanner.style.display = 'none';
+                } else if (selectedPaymentMethod === 'pay-online') {
+                    // Show online payment options and update summary
+                    orderStatus.innerHTML = 'Order Not Accepted';
+                    orderStatus.className = 'status not-accepted';
+                    onlineOptions.style.display = 'block';
+                    updateOrderSummary();
+                    paymentSummary.style.display = 'block';
+                    qrScanner.style.display = 'block';
+                } else {
+                    // Hide both options if nothing is selected
+                    paymentSummary.style.display = 'none';
+                    onlineOptions.style.display = 'none';
+                    qrScanner.style.display = 'none';
+                }
+            });
         });
 
         // Handle online payment method selection
