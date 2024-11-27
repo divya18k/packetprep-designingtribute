@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Restaurant Menu</title>
+    <style>
+        /* General Styles */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+            color: #333;
+        }
+        header {
+            background-color: #333;
+            color: #fff;
+            padding: 15px 20px;
+            text-align: center;
+        }
+        .menu {
+            padding: 20px;
+        }
+        .menu h2 {
+            font-size: 2rem;
+            margin-bottom: 20px;
+        }
+
+        /* Menu Item Styles */
+        .item {
+            background-color: #fff;
+            margin: 10px 0;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .item h3 {
+            margin: 0;
+            font-size: 1.25rem;
+            font-weight: bold;
+        }
+        .price {
+            font-size: 1.1rem;
+            color: #888;
+        }
+        .description {
+            color: #555;
+            font-size: 0.95rem;
+        }
+
+        /* Responsive Design */
+        @media screen and (max-width: 768px) {
+            header {
+                padding: 10px;
+            }
+            .menu h2 {
+                font-size: 1.5rem;
+            }
+            .item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .price {
+                margin-top: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Restaurant Menu</h1>
+    </header>
+
+    <div class="menu">
+        <h2>Our Special Dishes</h2>
+        
+        <div class="item" aria-labelledby="grilled-chicken">
+            <div>
+                <h3 id="grilled-chicken">Grilled Chicken</h3>
+                <p class="description">Delicious grilled chicken with a side of fresh vegetables.</p>
+            </div>
+            <p class="price">$12.99</p>
+        </div>
+
+        <div class="item" aria-labelledby="vegetarian-pizza">
+            <div>
+                <h3 id="vegetarian-pizza">Vegetarian Pizza</h3>
+                <p class="description">A savory pizza topped with fresh veggies and cheese.</p>
+            </div>
+            <p class="price">$10.99</p>
+        </div>
+
+        <div class="item" aria-labelledby="spaghetti-carbonara">
+            <div>
+                <h3 id="spaghetti-carbonara">Spaghetti Carbonara</h3>
+                <p class="description">Classic Italian pasta with creamy sauce and bacon.</p>
+            </div>
+            <p class="price">$14.99</p>
+        </div>
+
+        <div class="item" aria-labelledby="caesar-salad">
+            <div>
+                <h3 id="caesar-salad">Caesar Salad</h3>
+                <p class="description">Fresh greens with Caesar dressing, croutons, and parmesan cheese.</p>
+            </div>
+            <p class="price">$7.99</p>
+        </div>
+
+        <div class="item" aria-labelledby="chocolate-cake">
+            <div>
+                <h3 id="chocolate-cake">Chocolate Cake</h3>
+                <p class="description">A rich and moist chocolate cake, perfect for dessert.</p>
+            </div>
+            <p class="price">$5.99</p>
+        </div>
+    </div>
+</body>
+</html>
