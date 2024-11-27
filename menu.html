@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Restaurant Menu</title>
+    <title>The Cup of Life</title>
     <style>
         /* General Styles */
         body {
@@ -47,9 +47,48 @@
             font-size: 1.1rem;
             color: #888;
         }
-        .description {
-            color: #555;
-            font-size: 0.95rem;
+
+        /* Quantity Controls */
+        .quantity-controls {
+            display: flex;
+            align-items: center;
+        }
+        .quantity-controls button {
+            padding: 5px 10px;
+            font-size: 1rem;
+            margin: 0 5px;
+            cursor: pointer;
+        }
+
+        /* Order Summary */
+        .order-summary {
+            background-color: #fff;
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .order-summary h2 {
+            font-size: 1.5rem;
+        }
+        .order-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 5px 0;
+        }
+
+        /* Place Order Button */
+        .place-order {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            font-size: 1.1rem;
+            border-radius: 5px;
+            text-align: center;
+            cursor: pointer;
+            margin-top: 15px;
+            text-decoration: none;
         }
 
         /* Responsive Design */
@@ -64,9 +103,6 @@
                 flex-direction: column;
                 align-items: flex-start;
             }
-            .price {
-                margin-top: 10px;
-            }
         }
     </style>
 </head>
@@ -76,47 +112,99 @@
     </header>
 
     <div class="menu">
-        <h2>Our Special Dishes</h2>
-        
-        <div class="item" aria-labelledby="grilled-chicken">
-            <div>
-                <h3 id="grilled-chicken">Grilled Chicken</h3>
-                <p class="description">Delicious grilled chicken with a side of fresh vegetables.</p>
-            </div>
-            <p class="price">$12.99</p>
-        </div>
-
-        <div class="item" aria-labelledby="vegetarian-pizza">
-            <div>
-                <h3 id="vegetarian-pizza">Vegetarian Pizza</h3>
-                <p class="description">A savory pizza topped with fresh veggies and cheese.</p>
-            </div>
-            <p class="price">$10.99</p>
-        </div>
-
-        <div class="item" aria-labelledby="spaghetti-carbonara">
-            <div>
-                <h3 id="spaghetti-carbonara">Spaghetti Carbonara</h3>
-                <p class="description">Classic Italian pasta with creamy sauce and bacon.</p>
-            </div>
-            <p class="price">$14.99</p>
-        </div>
-
-        <div class="item" aria-labelledby="caesar-salad">
-            <div>
-                <h3 id="caesar-salad">Caesar Salad</h3>
-                <p class="description">Fresh greens with Caesar dressing, croutons, and parmesan cheese.</p>
-            </div>
-            <p class="price">$7.99</p>
-        </div>
-
-        <div class="item" aria-labelledby="chocolate-cake">
-            <div>
-                <h3 id="chocolate-cake">Chocolate Cake</h3>
-                <p class="description">A rich and moist chocolate cake, perfect for dessert.</p>
-            </div>
-            <p class="price">$5.99</p>
-        </div>
+        <h2>Our Specials</h2>
+        <!-- Dynamic menu items will be inserted here -->
+        <div id="menu-items"></div>
     </div>
+
+    <div class="order-summary" id="order-summary">
+        <h2>Order Summary</h2>
+        <div id="order-items"></div>
+        <div><strong>Total:</strong> $<span id="total-amount">0.00</span></div>
+        <a class="place-order" href="payment.html">Place Order</a>
+    </div>
+
+    <script>
+        // Menu data - just add more items here as needed
+        const menuItems = [
+            { id: 'item1', name: 'Hot Normal Tea', price: 15.00 },
+            { id: 'item2', name: 'Ginger Tea', price: 20.00 },
+            { id: 'item3', name: 'Lemon Tea', price: 20.00 },
+            { id: 'item4', name: 'Masala Tea', price: 20.00 },
+            { id: 'item5', name: 'Ellachi Tea', price: 20.00 },
+            { id: 'item6', name: 'Jagerry Tea', price: 20.00 },
+            { id: 'item7', name: 'Green Tea', price: 20.00 }
+        ];
+
+        // Initialize quantities
+        const quantities = {};
+
+        // Dynamically create the menu items
+        const menuContainer = document.getElementById('menu-items');
+        menuItems.forEach(item => {
+            // Initialize the quantity for each item
+            quantities[item.id] = 0;
+
+            // Create the menu item element dynamically
+            const itemElement = document.createElement('div');
+            itemElement.classList.add('item');
+            itemElement.id = item.id;
+
+            itemElement.innerHTML = `
+                <div>
+                    <h3>${item.name}</h3>
+                    <p class="price">$${item.price.toFixed(2)}</p>
+                </div>
+                <div class="quantity-controls">
+                    <button onclick="decrement('${item.id}')">-</button>
+                    <span id="quantity-${item.id}">0</span>
+                    <button onclick="increment('${item.id}')">+</button>
+                </div>
+            `;
+
+            // Append the item element to the menu container
+            menuContainer.appendChild(itemElement);
+        });
+
+        // Increment item quantity
+        function increment(itemId) {
+            quantities[itemId]++;
+            updateQuantity(itemId);
+            updateOrderSummary();
+        }
+
+        // Decrement item quantity
+        function decrement(itemId) {
+            if (quantities[itemId] > 0) {
+                quantities[itemId]--;
+                updateQuantity(itemId);
+                updateOrderSummary();
+            }
+        }
+
+        // Update the displayed quantity
+        function updateQuantity(itemId) {
+            document.getElementById(`quantity-${itemId}`).textContent = quantities[itemId];
+        }
+
+        // Update the order summary
+        function updateOrderSummary() {
+            let orderItems = '';
+            let totalAmount = 0;
+
+            // Loop through all menu items and calculate total for those selected
+            menuItems.forEach(item => {
+                if (quantities[item.id] > 0) {
+                    const itemTotal = item.price * quantities[item.id];
+                    orderItems += `<div class="order-item">${item.name} x ${quantities[item.id]} - $${itemTotal.toFixed(2)}</div>`;
+                    totalAmount += itemTotal;
+                }
+            });
+
+            // Update the order summary with the items and total
+            document.getElementById('order-items').innerHTML = orderItems;
+            document.getElementById('total-amount').textContent = totalAmount.toFixed(2);
+        }
+    </script>
 </body>
 </html>
